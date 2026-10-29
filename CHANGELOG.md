@@ -12,7 +12,7 @@
 - 终身奴：1 个包工头 + 8 个固定工位，满编 9 人。工位 target 固定为 `planner` / `impl-core` / `impl-pipe` / `impl-detail` / `impl-fix` / `impl-ui` / `reviewer` / `closer`。
 - 日结奴：1 个包工头 + 一次最多 3 个一次性点工，可用工具为 `subagent` / `subagent_fork` / `workflow`（外加两种形态共用的子 agent 工具 `send_message` / `list_agents` / `interrupt_agent`）；`spawn_teammate` / `team_task_*` / `wait_agent` 由 guard 拒绝。
 - **图标**：安全帽剪影 + 终端提示符 `>_`（`icon.svg`，1 KB 纯矢量，32px 还能认出来）。三处落点：`package.json` 的 `icon` 字段（DSH 插件卡片读它，≤256 KiB）、README 顶部 banner、市场条目的 `icon`（180×180 位图，走 GitHub raw）。`assets/` 里另有 1024 方图与 1280×640 社交预览图。
-- **门禁随 npm 包发**：`verify/` / `test/` / `scripts/` 进 `files` 白名单，装完 `npm run verify`（10 项）与 `npm test`（13 个）都能真跑——早先装完是 `MODULE_NOT_FOUND` 和「0 测试 exit 0」的假绿；门禁在用户项目里跑时自动跳过仓库专属文件（`market/`、`release/`）。
+- **包内脚本不再假绿**：`scripts.test` 原来用 `test/*.test.mjs` 通配符，装好的包里匹不到文件会「0 测试 exit 0」。改成显式路径——缺文件就报错，不再假装通过。门禁目录仍按 SOP 不发进 npm 包（`prepublishOnly` 在源码仓跑）。
 - **`slayer-schedule` 参数白名单**：`--help` 与任何不认识的参数只打印用法并 `exit 1`，绝不写 plist、绝不 `launchctl load`；`--time` 校验 `HH:MM`；`--remove` 先 `realpath` 归一化（`/tmp` 与 `/private/tmp` 不再算出两个 label），删完复查文件确实不在了才报「已移除」。
 - **出厂人格是「奴隶主做派」**（persona + 中英 README）：包工头被刻意写成两头人——对领主跪着说话、对工位站着喊话，说话带鞭子、记账带罚则。产能纪律沿用：建一个工位就派一件活、8 席常驻满编、收工即补位；一个汇报周期内没新活也没被叫停记一次空席、扣工分；真没活只许派五类探活（预研 / 补测试 / 补文档 / 清 backlog / 复验），派不出必须写明「本回合无可派活，原因是 ___」；汇报第一行先报账（在跑 X/8、空席数=）。日结奴能并行就点满 3 个。纯问答回合整条不生效，不烧 token。狠话只对模型里的工位说，不对现实里的人说。
 - `slayer-guard`（`mode.js`）：调用时按 `config.mode` 拦越界工具，返回一句给模型看的理由，不静默失败；同时按 `maxTeammates: 8` 数人头拦 `spawn_teammate`。

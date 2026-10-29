@@ -112,12 +112,18 @@ check(1, 'package.json 契约', () => {
   const files = pkg.files;
   if (!Array.isArray(files) || files.length === 0) problems.push('缺 files 白名单');
   else {
-    // 门禁随包发：早先为了「包要轻」把 verify/test/scripts 排除在 npm 包外，
-    // 结果装完 `npm run verify` 直接 MODULE_NOT_FOUND、`npm test` 0 测试还 exit 0（假绿）。
-    // 现在它们必须进包，`npm run verify` / `npm test` 装完就能跑。
-    for (const needed of ['verify/', 'test/', 'scripts/']) {
-      if (!files.includes(needed)) problems.push(`files 白名单必须含 ${needed}（否则装完 npm run verify / npm test 是坏的或假绿）`);
+    // SOP 口径：门禁目录不发进 npm 包（prepublishOnly 在源码仓跑，不依赖包内文件）。
+    // 但 scripts 必须显式指向文件：用 glob 的话，装好的包里 test 匹配不到文件会 exit 0（0 测试假绿）。
+    const leak = files.filter((entry) => /^(verify|test|tests|scripts)(\/|$)/.test(entry));
+    if (leak.length > 0) problems.push(`files 白名单不该含 ${leak.join(', ')}（门禁目录不进包）`);
+    for (const [name, command] of Object.entries(pkg.scripts ?? {})) {
+      if (/[\*?\[]/.test(command)) problems.push(`scripts.${name} 用了通配符，装好的包里会静默匹不到文件而假绿：${command}`);
     }
+    for (const name of ['test', 'verify']) {
+      if (!pkg.scripts?.[name]) problems.push(`缺 scripts.${name}`);
+    }
+    if (!/verify\/smoke\.mjs/.test(pkg.scripts?.verify ?? '')) problems.push('scripts.verify 应显式跑 verify/smoke.mjs');
+    if (!/verify\/smoke\.mjs/.test(pkg.scripts?.prepublishOnly ?? '')) problems.push('scripts.prepublishOnly 应显式跑 verify/smoke.mjs');
     for (const entry of files) {
       if (!exists(entry.replace(/\/$/, ''))) problems.push(`files 白名单里的 ${entry} 不存在`);
     }

@@ -101,20 +101,23 @@ test('package.json：市场与安装契约全在', () => {
   assert.deepEqual(Object.keys(pkg.bin).sort(), ['slayer-init', 'slayer-schedule', 'slayer-sync']);
 });
 
-test('files 白名单：门禁随包发，装完 npm run verify / npm test 能跑', () => {
+test('files 白名单：不发门禁目录；scripts 显式指文件，不许通配符假绿', () => {
   const files = pkg.files;
-  // 早先为了包轻把门禁排除在 npm 包外，结果装完 `npm run verify` 是 MODULE_NOT_FOUND、
-  // `npm test` 0 测试还 exit 0（假绿）。这两条脚本必须能在装好的包里跑，目录就得进包。
   for (const dir of ['verify/', 'test/', 'scripts/']) {
-    assert.ok(files.includes(dir), `files 缺 ${dir}：装完 npm run verify / npm test 会是坏的或假绿`);
+    assert.ok(!files.includes(dir), `${dir} 不该进 npm 包（门禁在源码仓跑）`);
   }
-  for (const entry of ['mode.js', 'cordis.patch.yml', 'docs/', 'README.md', 'bin/', 'template/', 'manuals/']) {
+  for (const entry of ['mode.js', 'cordis.patch.yml', 'docs/', 'README.md', 'bin/', 'template/', 'manuals/', 'icon.svg', 'assets/icon-180.png']) {
     assert.ok(files.includes(entry), `files 缺 ${entry}`);
   }
-  // 反向：开发仓私货绝不能进包
-  for (const forbidden of ['docs/dev/', 'SLAYER.md', '.github/', 'market/']) {
+  for (const forbidden of ['docs/dev/', 'SLAYER.md', '.github/', 'market/', 'release/']) {
     assert.ok(!files.includes(forbidden), `${forbidden} 不该进 npm 包`);
   }
+  // 假绿防线：装好的包里没有 test/，靠 glob 会「0 测试 exit 0」
+  for (const [name, command] of Object.entries(pkg.scripts)) {
+    assert.ok(!/[*?[]/.test(command), `scripts.${name} 不许用通配符：${command}`);
+  }
+  assert.match(pkg.scripts.test, /test\/smoke\.test\.mjs/, 'test 必须显式指向文件');
+  assert.match(pkg.scripts.verify, /verify\/smoke\.mjs/, 'verify 必须显式指向文件');
 });
 
 test('构建脚本 FORBIDDEN 命中本机路径与 token 样本', () => {
