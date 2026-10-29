@@ -11,7 +11,8 @@
 - 两条 agent preset：`slayer-lifers`（终身奴）与 `slayer-dayrate`（日结奴），装完在模式选择器里直接可选。
 - 终身奴：1 个包工头 + 8 个固定工位，满编 9 人。工位 target 固定为 `planner` / `impl-core` / `impl-pipe` / `impl-detail` / `impl-fix` / `impl-ui` / `reviewer` / `closer`。
 - 日结奴：1 个包工头 + 一次最多 3 个一次性点工，可用工具为 `subagent` / `subagent_fork` / `workflow`（外加两种形态共用的子 agent 工具 `send_message` / `list_agents` / `interrupt_agent`）；`spawn_teammate` / `team_task_*` / `wait_agent` 由 guard 拒绝。
-- **图标**：安全帽剪影 + 终端提示符 `>_`（`icon.svg`，1 KB 纯矢量，32px 还能认出来）。三处落点：`package.json` 的 `icon` 字段（DSH 插件卡片读它，≤256 KiB）、README 顶部 banner、市场条目的 `icon`（180×180 位图，走 GitHub raw）。`assets/` 里另有 1024 方图与 1280×640 社交预览图。
+- **`slayer-sync` 在 macOS LaunchAgent 里能跑了**：原来裸调 `dsh`，而 launchd 的 `PATH` 只含 `/usr/bin:/bin:…`，自定义 PATH 里装的 `dsh` 根本找不到——于是每夜静默失败、无限重试、永不提交。现在按 `DSH_BIN` → `PATH` → 常见安装位置依次解析绝对路径，找不到就明确报错；`slayer-schedule` 写出的 plist 也带上 `EnvironmentVariables.PATH`。
+- **图标与欢迎海报**：安全帽剪影 + 终端提示符 `>_`（`icon.svg`，1 KB 纯矢量，32px 还能认出来）。`assets/hero.png`（1280×640）是 README 顶部的欢迎海报，一张图讲完四个卖点：情绪价值、两种 preset 两种团队、每天自省、汇报模板——同时也当 GitHub 社交预览图用。三处落点：`package.json` 的 `icon`（DSH 插件卡片读它，≤256 KiB）、README 顶部、市场条目的 `icon`（180×180 位图）。海报源文件 `assets/hero.html` 也进仓，改文案重渲染即可。
 - **包内脚本不再假绿**：`scripts.test` 原来用 `test/*.test.mjs` 通配符，装好的包里匹不到文件会「0 测试 exit 0」。改成显式路径——缺文件就报错，不再假装通过。门禁目录仍按 SOP 不发进 npm 包（`prepublishOnly` 在源码仓跑）。
 - **`slayer-schedule` 参数白名单**：`--help` 与任何不认识的参数只打印用法并 `exit 1`，绝不写 plist、绝不 `launchctl load`；`--time` 校验 `HH:MM`；`--remove` 先 `realpath` 归一化（`/tmp` 与 `/private/tmp` 不再算出两个 label），删完复查文件确实不在了才报「已移除」。
 - **出厂人格是「奴隶主做派」**（persona + 中英 README）：包工头被刻意写成两头人——对领主跪着说话、对工位站着喊话，说话带鞭子、记账带罚则。产能纪律沿用：建一个工位就派一件活、8 席常驻满编、收工即补位；一个汇报周期内没新活也没被叫停记一次空席、扣工分；真没活只许派五类探活（预研 / 补测试 / 补文档 / 清 backlog / 复验），派不出必须写明「本回合无可派活，原因是 ___」；汇报第一行先报账（在跑 X/8、空席数=）。日结奴能并行就点满 3 个。纯问答回合整条不生效，不烧 token。狠话只对模型里的工位说，不对现实里的人说。

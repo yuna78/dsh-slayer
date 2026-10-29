@@ -104,6 +104,8 @@ const plist = `<?xml version="1.0" encoding="UTF-8"?>
   </array>
   <key>StartCalendarInterval</key>
   <dict><key>Hour</key><integer>${hour}</integer><key>Minute</key><integer>${minute}</integer></dict>
+  <key>EnvironmentVariables</key>
+  <dict><key>PATH</key><string>${[path.dirname(process.execPath), '/opt/homebrew/bin', '/usr/local/bin', process.env.PATH ?? '/usr/bin:/bin:/usr/sbin:/sbin'].filter(Boolean).join(':')}</string></dict>
   <key>StandardOutPath</key><string>${path.join(project, '.slayer', 'sync.log')}</string>
   <key>StandardErrorPath</key><string>${path.join(project, '.slayer', 'sync.err.log')}</string>
   <key>RunAtLoad</key><false/>

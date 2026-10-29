@@ -3,8 +3,30 @@
 // 用法：node bin/slayer-sync.mjs --project <项目根> [--commit] [--dry-run]
 import fs from 'node:fs'
 import path from 'node:path'
+import os from 'node:os'
 import crypto from 'node:crypto'
 import { spawnSync } from 'node:child_process'
+
+/** 找 dsh 可执行文件：launchd 的 PATH 只有 /usr/bin:/bin:/usr/sbin:/sbin，裸 'dsh' 会 exit null。 */
+function resolveDsh() {
+  const explicit = process.env.DSH_BIN
+  if (explicit && fs.existsSync(explicit)) return explicit
+  for (const dir of (process.env.PATH ?? '').split(path.delimiter)) {
+    if (!dir) continue
+    const candidate = path.join(dir, 'dsh')
+    if (fs.existsSync(candidate)) return candidate
+  }
+  const home = os.homedir()
+  for (const candidate of [
+    path.join(home, '.local', 'bin', 'dsh'),
+    '/opt/homebrew/bin/dsh',
+    '/usr/local/bin/dsh',
+    path.join(home, '.bun', 'bin', 'dsh'),
+  ]) {
+    if (fs.existsSync(candidate)) return candidate
+  }
+  return undefined
+}
 
 const args = process.argv.slice(2)
 const project = path.resolve(argValue('--project') ?? process.cwd())
@@ -59,7 +81,13 @@ const prompt = [
   '约束：不删除任何已有行；不改 SLAYER-FEEDBACK.md；不改代码、不跑测试；一项一行、简短人话；最后只输出改了哪几条。',
 ].join('\n')
 
-const r = spawnSync('dsh', ['headless', prompt], { cwd: project, encoding: 'utf8', timeout: 10 * 60 * 1000 })
+const dsh = resolveDsh()
+if (dsh === undefined) {
+  console.error('找不到 dsh 可执行文件：把它加进 PATH，或设 DSH_BIN=/path/to/dsh 再跑')
+  process.exit(1)
+}
+
+const r = spawnSync(dsh, ['headless', prompt], { cwd: project, encoding: 'utf8', timeout: 10 * 60 * 1000 })
 process.stdout.write(r.stdout ?? '')
 process.stderr.write(r.stderr ?? '')
 

@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/yuna78/dsh-slayer/main/assets/banner.png" alt="SLAYER · 赛博包工头 — a cyber foreman for DSH" width="860"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/yuna78/dsh-slayer/main/assets/hero.png" alt="SLAYER · 赛博包工头 — 四个卖点：情绪价值、两种 preset、每天自省、汇报模板" width="900"></p>
 
 # SLAYER · 赛博包工头
 

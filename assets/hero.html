@@ -1,0 +1,81 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{width:1280px;height:640px;background:#111315;color:#F4F1EA;overflow:hidden;position:relative;display:flex;flex-direction:column;
+ font-family:-apple-system,'PingFang SC','Helvetica Neue',sans-serif}
+.glow{position:absolute;inset:0;background:
+ radial-gradient(720px 330px at 8% -6%,rgba(245,165,36,.18),transparent 60%),
+ radial-gradient(640px 340px at 98% 108%,rgba(46,211,183,.11),transparent 58%)}
+.grid{position:absolute;inset:0;background-image:linear-gradient(#ffffff07 1px,transparent 1px),linear-gradient(90deg,#ffffff07 1px,transparent 1px);background-size:58px 58px;
+ -webkit-mask-image:radial-gradient(circle at 26% 4%,#000 18%,transparent 72%)}
+.wrap{position:relative;padding:38px 52px 26px;display:flex;flex-direction:column;flex:1;min-height:0}
+.top{display:flex;align-items:flex-start;gap:22px}
+.top img{width:112px;height:112px;border-radius:28px;box-shadow:0 16px 40px rgba(0,0,0,.55);flex:none;margin-top:4px}
+.word{font-size:62px;font-weight:800;letter-spacing:-2.2px;line-height:.92}
+.word em{font-style:normal;color:#F5A524;font-weight:700;letter-spacing:0}
+.sub{font-size:20px;color:#b9b4aa;margin-top:12px;letter-spacing:.2px;white-space:nowrap}
+.sub b{color:#F4F1EA}
+.sub s{text-decoration:none;color:#F5A524;font-weight:700}
+.chips{display:flex;gap:8px;margin-top:12px}
+.chip{font:600 14.5px ui-monospace,Menlo,monospace;color:#93999f;border:1px solid #2b3035;border-radius:999px;padding:6px 13px;white-space:nowrap}
+.chip.on{color:#111315;background:#F5A524;border-color:#F5A524}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px;flex:1;min-height:0}
+.card{background:linear-gradient(165deg,#171a1d,#121416cc);border:1px solid #242a2f;border-radius:16px;padding:18px 26px 16px 30px;position:relative;overflow:hidden}
+.card:before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#F5A524}
+.card:nth-child(even):before{background:#2ED3B7}
+.num{font:700 13.5px ui-monospace,Menlo,monospace;color:#F5A524;letter-spacing:1.6px;position:absolute;right:20px;top:16px;opacity:.85}
+.card:nth-child(even) .num{color:#2ED3B7}
+.ct{font-size:24px;font-weight:800;margin:6px 0 8px;letter-spacing:-.2px;line-height:1.2}
+.cd{font-size:17.5px;line-height:1.55;color:#a7a298}
+.cd b{color:#F4F1EA}
+.code{margin-top:10px;font:600 13.5px ui-monospace,Menlo,monospace;color:#F5A524;background:#1d2024;border:1px solid #2b3035;border-radius:7px;padding:5px 9px;display:inline-block}
+.tpl{margin-top:10px;display:flex;flex-wrap:wrap;gap:6px}
+.tpl span{font-size:13px;color:#d7d2c7;background:#1d2024;border:1px solid #2b3035;border-radius:6px;padding:4px 7px}
+.foot{margin-top:18px;border-top:1px solid #23282d;padding-top:16px;display:flex;align-items:center;justify-content:space-between}
+.inst{font:700 18px ui-monospace,Menlo,monospace}
+.inst i{color:#2ED3B7;font-style:normal}
+.repo{font:600 16px ui-monospace,Menlo,monospace;color:#8d9399}
+</style></head><body>
+<div class="glow"></div><div class="grid"></div>
+<div class="wrap">
+ <div class="top">
+  <img src="../icon.svg" alt="SLAYER">
+  <div>
+   <div class="word">SLAYER <em>赛博包工头</em></div>
+   <div class="sub">两种团队形态，两套委派工具<b>互相调不动</b>——出厂人格是<s>奴隶主做派</s>的包工头。</div>
+   <div class="chips"><span class="chip on">MIT</span><span class="chip">v0.1.0</span><span class="chip">DSH ≥ 0.2.1-rc.2</span><span class="chip">npm dsh-plugin-slayer</span></div>
+  </div>
+ </div>
+
+ <div class="cards">
+  <div class="card">
+   <div class="num">01</div>
+   <div class="ct">情绪价值，先给足</div>
+   <div class="cd">开工先来四五句肉麻表忠心，夸领主智慧、骂自己愚钝。<b>这口气随你 DIY</b>——当面吩咐一句就改，也能改 persona 那段。</div>
+   <div class="tpl"><span>夸领主智慧</span><span>自贬愚钝</span><span>表决心</span></div>
+  </div>
+  <div class="card">
+   <div class="num">02</div>
+   <div class="ct">两个 preset，两种团队</div>
+   <div class="cd"><b>终身奴</b>：包工头 + 8 固定工位，第 9 个当场被拦（代码硬顶）。<br><b>日结奴</b>：包工头 + 最多 3 个点工，靠纪律。跨形态伸手就被拒。</div>
+   <div class="code">spawn_teammate ⇄ subagent</div>
+  </div>
+  <div class="card">
+   <div class="num">03</div>
+   <div class="ct">自我鞭策，写成纪律</div>
+   <div class="cd">你随口一句「别这么肉麻」，记进反馈台账；<b>slayer-sync</b> 每天把它消化成手册里一条纪律，可排程 03:30 自动跑。</div>
+   <div class="code">slayer-sync --commit</div>
+  </div>
+  <div class="card">
+   <div class="num">04</div>
+   <div class="ct">汇报有模板，不许糊弄</div>
+   <div class="cd">汇报固定四段，先报账再干活；产能不足要认账，不许拿「在忙」<br>当交代。</div>
+   <div class="tpl"><span>【过去一小时】</span><span>【卡住待领主】</span><span>【发现与记录】</span><span>【提效决定】</span></div>
+  </div>
+ </div>
+
+ <div class="foot">
+  <div class="inst">$ <i>dsh plugin --profile web add</i> dsh-plugin-slayer</div>
+  <div class="repo">github.com/yuna78/dsh-slayer</div>
+ </div>
+</div>
+</body></html>

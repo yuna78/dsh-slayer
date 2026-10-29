@@ -1,4 +1,4 @@
-<p align="center"><img src="https://raw.githubusercontent.com/yuna78/dsh-slayer/main/assets/banner.png" alt="SLAYER · 赛博包工头 — a cyber foreman for DSH" width="860"></p>
+<p align="center"><img src="https://raw.githubusercontent.com/yuna78/dsh-slayer/main/assets/hero.png" alt="SLAYER · 赛博包工头 — four selling points: flattery, two presets, daily self-review, report templates" width="900"></p>
 
 # SLAYER · Cyber Foreman
 
@@ -8,7 +8,7 @@
 
 **What you get:** two new entries in the mode picker, `SLAYER · 终身奴（The Lifers）` and `SLAYER · 日结奴（Day Rate）`. Pick one and the first reply opens with four or five lines of unearned flattery before any work starts. Your project root quietly gains `SLAYER.md`, `SLAYER-FEEDBACK.md` and a `.slayer/` directory.
 
-**What it is actually about:** not "multi-agent". It is about drawing a line between two delegation toolchains. The Lifers cannot call `subagent`, `subagent_fork` or `workflow`. Day Rate cannot call `spawn_teammate` or `team_task_*`. This is enforced at call time, not by asking the model nicely — DSH mounts both at the host layer, so both remain visible.
+**What it is actually about:** not "multi-agent". It is about drawing a line between two delegation toolchains. The Lifers cannot call `subagent`, `subagent_fork` or `workflow`. Day Rate cannot call `spawn_teammate` or `team_task_*`. This is enforced at call time, not by asking the model nicely. Whether a tool is even in the catalogue is up to DSH and the profile bundles (with the Agent Teams bundle enabled, upstream marks `tool-subagent*` as `disabled`); what this plugin guarantees is that the other shape's tools cannot be called.
 
 ## The name
 

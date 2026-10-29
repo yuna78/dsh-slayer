@@ -472,8 +472,17 @@ check(11, '图标：插件卡片 icon + 市场条目 icon', () => {
   if (!pkg.exports?.['./package.json']) problems.push('exports 必须导出 ./package.json，否则 DSH 读不到 icon（静默失效）');
   // npm 包只带矢量图标与市场用的 180 位图：banner / 社交预览体积大，只在仓库里给 GitHub 用
   if (!pkg.files?.includes('assets/icon-180.png')) problems.push('files 白名单必须含 assets/icon-180.png（市场条目 icon 指它）');
-  if ((pkg.files ?? []).some((entry) => /^assets\/(banner|social-preview|icon-1024)/.test(entry))) {
-    problems.push('大图（banner / social-preview / icon-1024）不该进 npm 包，仓库里给 GitHub 用即可');
+  // 白名单口径：assets/ 下只有市场用的 180 位图能进 npm 包，其余大图留在仓库里给 GitHub 用
+  const heavyAssets = (pkg.files ?? []).filter((entry) => /^assets\//.test(entry) && entry !== 'assets/icon-180.png');
+  if (heavyAssets.length > 0) problems.push(`assets/ 下除 icon-180.png 外都不该进 npm 包：${heavyAssets.join(', ')}`);
+  // README 里引用的图靠 GitHub raw，仓库里单张别超 400 KB（GitHub 会压、npm 会慢）
+  if (exists('assets')) {
+    for (const name of readdirSync(join(ROOT, 'assets'))) {
+      const full = join(ROOT, 'assets', name);
+      if (!/\.(png|jpe?g|webp)$/i.test(name)) continue;
+      const size = statSync(full).size;
+      if (size > 400 * 1024) problems.push(`assets/${name} 有 ${Math.round(size / 1024)} KB，超过 400 KB 上限`);
+    }
   }
 
   // 市场条目：icon 必须是 GitHub 托管的绝对网址，指到 180×180 位图
