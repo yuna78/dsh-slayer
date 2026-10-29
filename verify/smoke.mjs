@@ -17,7 +17,7 @@
  *  10) 全仓「鼓励空转」的旧原话清零（删不干净会红）
  */
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs';
-import { dirname, join, relative, resolve } from 'node:path';
+import { dirname, isAbsolute, join, relative, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
@@ -238,6 +238,11 @@ check(5, '文档齐全 + README 无死链', () => {
       if (!target || /^(https?:|mailto:|#|\/)/.test(target)) continue;
       targets.add(target.replace(/^\.\//, ''));
     }
+    for (const match of text.matchAll(/<img[^>]*\ssrc=["']([^"']+)["']/gi)) {
+      const target = match[1].split('#')[0].trim();
+      if (!target || /^(https?:|data:)/.test(target)) continue;
+      targets.add(target.replace(/^\.\//, ''));
+    }
     for (const target of targets) {
       if (!exists(target)) problems.push(`${readme} 链接指向不存在的文件：${target}`);
     }
@@ -434,6 +439,50 @@ check(8, '公开包产物 private=false（可选）', () => {
   if (pkg.private !== false) return [`dist/public/package.json 的 private 应为 false，实际 ${pkg.private}`];
   console.log('    public bundle: private=false ✓');
   return [];
+});
+
+// ────────────────────────── 11. 图标：DSH 插件卡片与市场索引都要能读到
+// DSH 的插件卡片读 package.json 根 icon（相对路径、≤256 KiB、需导出 ./package.json），
+// 市场索引读 awesome-dsh-plugin 条目的 icon（GitHub 托管的 180×180 位图）。
+check(11, '图标：插件卡片 icon + 市场条目 icon', () => {
+  const problems = [];
+  const pkg = JSON.parse(read('package.json'));
+  const icon = pkg.icon;
+  const ICON_MAX = 256 * 1024;
+
+  if (typeof icon !== 'string' || icon === '') problems.push('package.json 缺 icon 字段（DSH 插件卡片会退化成默认图）');
+  else {
+    if (isAbsolute(icon)) problems.push(`icon 必须是相对路径（DSH 要求相对 manifest 目录）：${icon}`);
+    if (!/\.(svg|png|jpe?g|webp)$/i.test(icon)) problems.push(`icon 只认 svg/png/jpeg/webp：${icon}`);
+    if (!exists(icon)) problems.push(`icon 指向的文件不存在：${icon}`);
+    else {
+      const size = statSync(join(ROOT, icon)).size;
+      if (size > ICON_MAX) problems.push(`icon 超过 256 KiB（${size} 字节），DSH 会拒收并退化成默认图`);
+      console.log(`    icon: ${icon}（${size} 字节）`);
+    }
+  }
+  const iconInFiles = (pkg.files ?? []).some((entry) => entry.replace(/^\.\//, '') === icon.replace(/^\.\//, ''));
+  if (!iconInFiles) problems.push(`files 白名单必须含 ${icon}，否则 npm 包里没图`);
+  if (!pkg.exports?.['./package.json']) problems.push('exports 必须导出 ./package.json，否则 DSH 读不到 icon（静默失效）');
+  // npm 包只带矢量图标与市场用的 180 位图：banner / 社交预览体积大，只在仓库里给 GitHub 用
+  if (!pkg.files?.includes('assets/icon-180.png')) problems.push('files 白名单必须含 assets/icon-180.png（市场条目 icon 指它）');
+  if ((pkg.files ?? []).some((entry) => /^assets\/(banner|social-preview|icon-1024)/.test(entry))) {
+    problems.push('大图（banner / social-preview / icon-1024）不该进 npm 包，仓库里给 GitHub 用即可');
+  }
+
+  // 市场条目：icon 必须是 GitHub 托管的绝对网址，指到 180×180 位图
+  const marketYml = 'market/yuna78__dsh-slayer.yml';
+  if (exists(marketYml)) {
+    const text = read(marketYml);
+    const m = /^icon:\s*(\S+)\s*$/m.exec(text);
+    if (!m) problems.push(`${marketYml} 缺 icon:（市场卡片会没有图）`);
+    else if (!/^https:\/\/raw\.githubusercontent\.com\/yuna78\/dsh-slayer\//.test(m[1])) {
+      problems.push(`市场 icon 必须指向本仓托管的绝对网址：${m[1]}`);
+    } else if (!/180/.test(m[1])) problems.push(`市场 icon 建议 180×180 位图：${m[1]}`);
+    if (/icon/i.test(text) && /^\s*icon:.*\n.*\n.*icon:/m.test(text)) problems.push(`${marketYml} 里 icon 只能出现一次`);
+  }
+
+  return problems;
 });
 
 // ─────────────────────────────────────────────────────────────── 汇总

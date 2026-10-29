@@ -45,6 +45,7 @@ export const FILES = [
   'LICENSE',
   'SEATS.md',
   'SLAYER.template.md',
+  'icon.svg',
   '.gitignore',
 ];
 
@@ -52,7 +53,7 @@ export const FILES = [
 export const GENERATED = ['package.json'];
 
 /** 整棵复制的目录。 */
-export const DIRS = ['bin', 'template', 'manuals', 'docs', 'market', 'release', 'verify', 'test', 'scripts', '.github'];
+export const DIRS = ['bin', 'template', 'manuals', 'docs', 'market', 'release', 'verify', 'test', 'scripts', '.github', 'assets'];
 
 /** 目录里要整棵掐掉的子树（内部台账 / 开发过程记录，绝不进公开包）。 */
 export const SKIP_TREE = new Set(['docs/dev', 'docs/log']);

@@ -1,3 +1,5 @@
+<p align="center"><img src="https://raw.githubusercontent.com/yuna78/dsh-slayer/main/assets/banner.png" alt="SLAYER · 赛博包工头 — a cyber foreman for DSH" width="860"></p>
+
 # SLAYER · 赛博包工头
 
 `yuna78/dsh-slayer` · npm `dsh-plugin-slayer` · v0.1.0 · MIT · DSH `>=0.2.1-rc.2 <0.3.0`

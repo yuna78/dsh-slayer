@@ -2,6 +2,7 @@
   "name": "dsh-plugin-slayer",
   "version": "0.1.0",
   "private": false,
+  "icon": "./icon.svg",
   "description": "SLAYER — a cyber foreman for DSH. Two delegation modes with call-time tool guards: a fixed 8-seat crew, or up to 3 day-rate temps; using the other mode's tools is refused with a reason.",
   "keywords": [
     "dsh",
@@ -49,6 +50,8 @@
     "README.md",
     "README.en.md",
     "CHANGELOG.md",
+    "icon.svg",
+    "assets/icon-180.png",
     "docs/",
     "verify/",
     "test/",
