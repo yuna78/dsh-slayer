@@ -1,0 +1,74 @@
+{
+  "name": "dsh-plugin-slayer",
+  "version": "0.1.0",
+  "private": false,
+  "description": "SLAYER — a cyber foreman for DSH. Two delegation modes with call-time tool guards: a fixed 8-seat crew, or up to 3 day-rate temps; using the other mode's tools is refused with a reason.",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "deepseek-harness",
+    "agent-preset",
+    "multi-agent",
+    "subagent",
+    "agent-team",
+    "workflow",
+    "delegation",
+    "foreman",
+    "preset"
+  ],
+  "homepage": "https://github.com/yuna78/dsh-slayer#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yuna78/dsh-slayer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yuna78/dsh-slayer/issues"
+  },
+  "author": "Yuna",
+  "license": "MIT",
+  "type": "module",
+  "main": "./mode.js",
+  "exports": {
+    ".": "./mode.js",
+    "./mode.js": "./mode.js",
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "slayer-init": "bin/slayer-init.mjs",
+    "slayer-sync": "bin/slayer-sync.mjs",
+    "slayer-schedule": "bin/slayer-schedule.mjs"
+  },
+  "files": [
+    "mode.js",
+    "cordis.patch.yml",
+    "bin/",
+    "template/",
+    "manuals/",
+    "SEATS.md",
+    "SLAYER.template.md",
+    "README.md",
+    "README.en.md",
+    "CHANGELOG.md",
+    "docs/",
+    "verify/",
+    "test/",
+    "scripts/"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": "^22.19.0 || >=24.0.0",
+    "dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh": ">=0.2.1-rc.2 <0.3.0"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "verify": "node verify/smoke.mjs",
+    "prepublishOnly": "node verify/smoke.mjs"
+  }
+}
